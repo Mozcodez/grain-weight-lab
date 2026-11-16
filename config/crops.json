@@ -1,0 +1,9 @@
+{
+  "plausible_range": { "min_factor": 0.7, "max_factor": 1.1 },
+  "crops": [
+    { "id": "maize", "label": "Maize", "nominal_kg_options": [50, 100], "bulk_density_kg_m3": 750, "note": "placeholder — confirm with project supervisor" },
+    { "id": "beans", "label": "Beans", "nominal_kg_options": [50, 100], "bulk_density_kg_m3": 780, "note": "placeholder — confirm with project supervisor" },
+    { "id": "rice", "label": "Rice", "nominal_kg_options": [50, 100], "bulk_density_kg_m3": 800, "note": "placeholder — confirm with project supervisor" },
+    { "id": "sorghum", "label": "Sorghum", "nominal_kg_options": [50, 100], "bulk_density_kg_m3": 740, "note": "placeholder — confirm with project supervisor" }
+  ]
+}
