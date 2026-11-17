@@ -46,11 +46,12 @@ app.post('/api/estimate', async (req, res) => {
     const outputs = await Promise.all(Array.from({ length: runCount }, () => runEstimate({ apiKey: process.env.OPENROUTER_API_KEY, modelId, prompt, dataUrl })));
     const successful = outputs.filter((output) => !output.failed);
     if (!successful.length) return res.status(502).json({ error: `All ${runCount} model runs failed. ${outputs[0]?.error || 'Try again.'}`, runs: outputs });
+    const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
     const median = (values) => { const ordered = [...values].sort((a, b) => a - b); const mid = Math.floor(ordered.length / 2); return ordered.length % 2 ? ordered[mid] : (ordered[mid - 1] + ordered[mid]) / 2; };
-    const fillFactor = median(successful.map((item) => item.fill_factor));
+    const fillFactor = mean(successful.map((item) => item.fill_factor));
     const directWeightKg = median(successful.map((item) => item.estimated_weight_kg));
-    const finalWeightKg = nominal * fillFactor;
-    const confidence = median(successful.map((item) => item.confidence));
+    const finalWeightKg = mean(successful.map((item) => item.estimated_weight_kg));
+    const confidence = mean(successful.map((item) => item.confidence));
     const imageIssues = [...new Set(successful.flatMap((item) => item.image_issues).filter((issue) => issue !== 'none'))];
     const reasons = [];
     const min = nominal * range.min_factor;

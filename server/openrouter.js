@@ -10,7 +10,7 @@ function validate(data) {
   if (typeof data.sack_visible !== 'boolean' || typeof data.crop_guess !== 'string' || typeof data.marker_visible !== 'boolean' || typeof data.reasoning !== 'string') throw new Error('Response fields have invalid types');
   if (data.crop_matches_declared !== null && typeof data.crop_matches_declared !== 'boolean') throw new Error('crop_matches_declared must be boolean or null');
   if (!numeric.every((key) => Number.isFinite(data[key]))) throw new Error('Numeric output fields must be finite numbers');
-  if (data.fill_factor < 0.3 || data.fill_factor > 1.3 || data.confidence < 0 || data.confidence > 1) throw new Error('Output values are outside the schema range');
+  if (data.fill_factor < 0 || data.fill_factor > 1.3 || data.confidence < 0 || data.confidence > 1) throw new Error('Output values are outside the schema range');
   if (!Array.isArray(data.image_issues) || data.image_issues.some((issue) => !issues.includes(issue))) throw new Error('image_issues contains an invalid value');
   return data;
 }

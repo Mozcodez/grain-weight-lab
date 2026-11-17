@@ -43,7 +43,7 @@ The Express API listens on port `3001`; Vite proxies `/api` requests to it. If p
 
 1. In **Estimate**, choose a crop, nominal sack size, vision model, prompt variant, and number of runs.
 2. Add one clear photo of a single sack. The marker variant can use a reference marker such as an A4 sheet.
-3. Select **Estimate weight**. The final result uses the nominal sack weight multiplied by the median fill factor. The median direct model estimate is shown separately.
+3. Select **Estimate weight**. The final result is the mean of successful direct model weight estimates. The median direct estimate and individual run outputs remain visible as diagnostics. Fill factors can range down to zero, so underfilled sacks can estimate below 15 kg.
 4. Enter the measured scale weight if available, then save the test to the log.
 5. Open **Test results** to review saved tests, compare performance with the nominal-weight baseline, and export CSV.
 
