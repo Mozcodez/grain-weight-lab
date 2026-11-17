@@ -12,7 +12,7 @@ function useVercelBlob() {
 }
 
 async function blobSdk() {
-  if (!process.env.BLOB_STORE_ID && process.env.VERCEL === '1') {
+  if (!process.env.BLOB_STORE_ID && !process.env.BLOB_READ_WRITE_TOKEN && process.env.VERCEL === '1') {
     throw new Error('Connect a private Vercel Blob store to this project before using saved tests.');
   }
   return import('@vercel/blob');
