@@ -17,6 +17,8 @@ const app = express();
 app.use(express.json({ limit: '8mb' }));
 await initializeStorage();
 
+app.get('/', (_req, res) => res.redirect(307, '/index.html'));
+
 app.get('/api/config', (_req, res) => res.json({ ...crops, models: models.models }));
 
 app.post('/api/estimate', async (req, res) => {
