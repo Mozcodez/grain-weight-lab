@@ -3,3 +3,4 @@ node_modules/
 openrouter.env
 data/
 dist/
+.vercel/

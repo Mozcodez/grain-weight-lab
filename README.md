@@ -12,7 +12,7 @@ This is an experimental test rig. **A model estimate is not a substitute for a c
 - Review the fill-factor estimate, direct model estimate, uncertainty ranges, confidence, image issues, latency, token usage, and reported cost.
 - Save each test with an optional actual scale weight. Results without a scale reading are flagged as having no ground truth.
 - Compare model accuracy with the naive baseline that always predicts the nominal sack weight; export saved results as CSV.
-- Store saved results and photos locally in JSON and files. No database is used.
+- Store saved results and photos locally during development, and in private Vercel Blob storage when deployed.
 
 ## Requirements
 
@@ -66,8 +66,19 @@ Crop options, nominal sack sizes, bulk densities, and plausible weight factors a
 - The API key is read by the Express server from `.env`. The provided local `openrouter.env` file is also accepted as a fallback.
 - The key is never sent to the browser. Keep `.env` and `openrouter.env` private; do not commit either file.
 - Images are sent to OpenRouter when an estimate is requested. The app does not save a photo until **Save to test log** is selected.
-- Saved photos and results go to `data/photos/` and `data/results.json`. The whole `data/` directory is ignored by Git.
+- Locally, saved photos and results go to `data/photos/` and `data/results.json`. The whole `data/` directory is ignored by Git. Vercel uses a private Blob store because function filesystems are temporary.
 - `.gitignore` also excludes `node_modules/` and build output. Commit `.env.example`, not a populated `.env` file.
+
+## Vercel deployment
+
+The root `index.js` exports the Express app so Vercel can deploy the API as a Function. Vite's production build writes the frontend to `public/`, which Vercel serves from its CDN. Run `npm run build` after changing the frontend and include the updated `public/` assets in the deployment.
+
+The Vercel project should use the **Express** framework preset so the API is deployed as a Function. Set these up for the project:
+
+- `OPENROUTER_API_KEY`: add this as a private environment variable for Production (and Preview if needed). Never commit the key or expose it as a `VITE_` variable.
+- A **private Vercel Blob** store connected to the project: Vercel supplies the Blob store environment automatically. This holds saved test photos and result records across deployments.
+
+After connecting the store and confirming the OpenRouter key is set, redeploy the project. The app's API and saved-results routes then run through the Express Function.
 
 ## API routes
 
