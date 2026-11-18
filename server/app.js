@@ -6,6 +6,7 @@ import { buildPrompt, PROMPT_VERSION } from './prompts.js';
 import { runEstimate } from './openrouter.js';
 import { metricSets, compareMethods } from './metrics.js';
 import { initializeStorage, readResults, saveResult, deleteResult, readPhoto } from './storage.js';
+import { createResultsPdf } from './pdf.js';
 import crops from '../config/crops.json' with { type: 'json' };
 import models from '../config/models.json' with { type: 'json' };
 
@@ -114,23 +115,19 @@ app.delete('/api/results/:id', async (req, res) => {
   }
 });
 
-app.get('/api/results.csv', async (_req, res) => {
+app.get('/api/results.pdf', async (_req, res) => {
   let rows;
-  try { rows = await readResults(); } catch (error) {
+  try {
+    rows = await readResults();
+    rows = await Promise.all(rows.map(async (row) => ({ ...row, _photo: row.photo ? await readPhoto(row.photo) : null })));
+  } catch (error) {
     console.error('Export results failed:', error.message);
     return res.status(503).json({ error: 'Saved results storage is unavailable.' });
   }
-  const columns = ['id', 'createdAt', 'cropLabel', 'nominalKg', 'modelLabel', 'variant', 'finalWeightKg', 'directWeightKg', 'actualWeightKg', 'errorKg', 'errorPercent', 'status', 'promptVersion', 'imageHash'];
-  const quote = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
-  const lines = [columns.map(quote).join(',')];
-  for (const row of rows) {
-    const error = row.actualWeightKg ? row.finalWeightKg - row.actualWeightKg : '';
-    const pct = row.actualWeightKg ? (error / row.actualWeightKg) * 100 : '';
-    lines.push([row.id, row.createdAt, row.cropLabel, row.nominalKg, row.modelLabel, row.variant, row.finalWeightKg, row.directWeightKg, row.actualWeightKg, error, pct, row.status, row.promptVersion, row.imageHash].map(quote).join(','));
-  }
-  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', 'attachment; filename="sack-weight-results.csv"');
-  return res.send(`\uFEFF${lines.join('\r\n')}`);
+  const pdf = createResultsPdf(rows);
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'attachment; filename="sack-weight-results.pdf"');
+  return res.send(pdf);
 });
 
 app.get('/api/photos/:name', async (req, res) => {

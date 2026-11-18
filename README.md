@@ -11,7 +11,7 @@ This is an experimental test rig. **A model estimate is not a substitute for a c
 - Compare three configurable OpenRouter vision models, two prompt variants, and one to five independent runs.
 - Review the fill-factor estimate, direct model estimate, uncertainty ranges, confidence, image issues, latency, token usage, and reported cost.
 - Save each test with an optional actual scale weight. Results without a scale reading are flagged as having no ground truth.
-- Compare model accuracy with the naive baseline that always predicts the nominal sack weight; export saved results as CSV.
+- Compare model accuracy with the naive baseline that always predicts the nominal sack weight; export saved results as a PDF with photos.
 - Store saved results and photos locally during development, and in private Vercel Blob storage when deployed.
 
 ## Requirements
@@ -45,7 +45,7 @@ The Express API listens on port `3001`; Vite proxies `/api` requests to it. If p
 2. Add one clear photo of a single sack. The marker variant can use a reference marker such as an A4 sheet.
 3. Select **Estimate weight**. The final result is the mean of successful direct model weight estimates. The median direct estimate and individual run outputs remain visible as diagnostics. Fill factors can range down to zero, so underfilled sacks can estimate below 15 kg.
 4. Enter the measured scale weight if available, then save the test to the log.
-5. Open **Test results** to review saved tests, compare performance with the nominal-weight baseline, and export CSV.
+5. Open **Test results** to review saved tests, compare performance with the nominal-weight baseline, and export a PDF copy of the table with its photos.
 
 Accuracy metrics only include tests with an actual scale weight. The app reports count, MAE, MAPE, bias, and the share within ±5% and ±10%, overall and grouped by crop, model, and prompt variant.
 
